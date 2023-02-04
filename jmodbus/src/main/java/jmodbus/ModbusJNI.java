@@ -46,4 +46,5 @@ public class ModbusJNI {
     public static native void writeHoldingRegister(long contextPtr, int address, short value);
     public static native void writeHoldingRegisters(long contextPtr, int address, int count, short[] values);
     public static native void writeHoldingRegisters2(long contextPtr, int address, int count, Buffer buffer);
+    public static native void writeHoldingRegisters3(long contextPtr, int address, int count, byte[] buffer);
 }

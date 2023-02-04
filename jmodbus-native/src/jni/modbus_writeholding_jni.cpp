@@ -47,3 +47,22 @@ JNIEXPORT void JNICALL Java_jmodbus_ModbusJNI_writeHoldingRegisters2
         CHECK_ERROR2(env, rc);
     });
 }
+
+extern "C"
+JNIEXPORT void JNICALL Java_jmodbus_ModbusJNI_writeHoldingRegisters3
+        (JNIEnv* _env, jclass obj, jlong ptr, jint address, jint count, jbyteArray value) {
+    jnikit::context<void>(_env, [_env, ptr, address, count, value](jnikit::Env& env) -> void {
+        auto modbus_ctx = reinterpret_cast<modbus_t*>(ptr);
+
+        uint16_t outArray[TEMP_BUFFER_SIZE] = {};
+
+        jnikit::Array<jnikit::types::Byte> valueArray(_env, value);
+        for (int i = 0; i < count; i++) {
+            outArray[i] |= valueArray.getElement(i * 2) & 0xffff;
+            outArray[i] |= (valueArray.getElement(i * 2 + 1) & 0xffff) << 8;
+        }
+
+        auto rc = modbus_write_registers(modbus_ctx, address, count, outArray);
+        CHECK_ERROR2(env, rc);
+    });
+}
