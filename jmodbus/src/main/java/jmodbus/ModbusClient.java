@@ -347,6 +347,15 @@ public class ModbusClient implements Closeable {
         }
     }
 
+    public int getSlave() {
+        mLock.lock();
+        try {
+            return ModbusJNI.getSlave(mContextPtr);
+        } finally {
+            mLock.unlock();
+        }
+    }
+
     @Override
     public void close() {
         mLock.lock();
