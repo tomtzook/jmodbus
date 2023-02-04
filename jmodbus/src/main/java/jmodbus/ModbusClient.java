@@ -54,8 +54,10 @@ public class ModbusClient implements Closeable {
 
             if (buffer.isDirect()) {
                 ModbusJNI.readDiscreteInputs3(mContextPtr, address, count, buffer);
-            } else {
+            } else if (buffer.hasArray()) {
                 ModbusJNI.readDiscreteInputs4(mContextPtr, address, count, buffer.array());
+            } else {
+                throw new UnsupportedOperationException("buffer which is proxy to another cannot be used");
             }
         } finally {
             mLock.unlock();
@@ -110,8 +112,10 @@ public class ModbusClient implements Closeable {
 
             if (buffer.isDirect()) {
                 ModbusJNI.readCoils3(mContextPtr, address, count, buffer);
-            } else {
+            } else if (buffer.hasArray()) {
                 ModbusJNI.readCoils4(mContextPtr, address, count, buffer.array());
+            } else {
+                throw new UnsupportedOperationException("buffer which is proxy to another cannot be used");
             }
         } finally {
             mLock.unlock();
@@ -153,8 +157,42 @@ public class ModbusClient implements Closeable {
 
             if (buffer.isDirect()) {
                 ModbusJNI.readInputRegisters2(mContextPtr, address, count, buffer);
-            } else {
+            } else if (buffer.hasArray()) {
                 ModbusJNI.readInputRegisters(mContextPtr, address, count, buffer.array());
+            } else {
+                throw new UnsupportedOperationException("buffer which is proxy to another cannot be used");
+            }
+        } finally {
+            mLock.unlock();
+        }
+    }
+
+    public void readInputRegisters(int address, int count, byte[] buffer) {
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyArrayContainsEnoughForCount(count * 2, buffer.length);
+
+            ModbusJNI.readInputRegisters3(mContextPtr, address, count, buffer);
+        } finally {
+            mLock.unlock();
+        }
+    }
+
+    public void readInputRegisters(int address, int count, ByteBuffer buffer) {
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyBufferUsableForRead(buffer, count * 2); // short = 2 * byte
+
+            if (buffer.isDirect()) {
+                ModbusJNI.readInputRegisters2(mContextPtr, address, count, buffer);
+            } else if (buffer.hasArray()) {
+                ModbusJNI.readInputRegisters3(mContextPtr, address, count, buffer.array());
+            } else {
+                throw new UnsupportedOperationException("buffer which is proxy to another cannot be used");
             }
         } finally {
             mLock.unlock();
@@ -185,6 +223,36 @@ public class ModbusClient implements Closeable {
                 ModbusJNI.readHoldingRegisters2(mContextPtr, address, count, buffer);
             } else {
                 ModbusJNI.readHoldingRegisters(mContextPtr, address, count, buffer.array());
+            }
+        } finally {
+            mLock.unlock();
+        }
+    }
+
+    public void readHoldingRegisters(int address, int count, byte[] buffer) {
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyArrayContainsEnoughForCount(count * 2, buffer.length);
+
+            ModbusJNI.readHoldingRegisters3(mContextPtr, address, count, buffer);
+        } finally {
+            mLock.unlock();
+        }
+    }
+
+    public void readHoldingRegisters(int address, int count, ByteBuffer buffer) {
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyBufferUsableForRead(buffer, count * 2);
+
+            if (buffer.isDirect()) {
+                ModbusJNI.readHoldingRegisters2(mContextPtr, address, count, buffer);
+            } else {
+                ModbusJNI.readHoldingRegisters3(mContextPtr, address, count, buffer.array());
             }
         } finally {
             mLock.unlock();
