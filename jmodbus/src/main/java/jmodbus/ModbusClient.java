@@ -3,6 +3,7 @@ package jmodbus;
 import java.io.Closeable;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -18,51 +19,27 @@ public class ModbusClient implements Closeable {
         mIsClosed = false;
     }
 
-    public boolean[] readCoils(int address, int count) {
+    public void readDiscreteInputs(int address, int count, boolean[] buffer) {
         mLock.lock();
         try {
             verifyNotClosed();
             verifyValidCount(count);
+            verifyArrayContainsEnoughForCount(count, buffer.length);
 
-            return ModbusJNI.readCoils(mContextPtr, address, count);
+            ModbusJNI.readDiscreteInputs(mContextPtr, address, count, buffer);
         } finally {
             mLock.unlock();
         }
     }
 
-    public void readCoils(int address, int count, ByteBuffer buffer) {
+    public void readDiscreteInputs(int address, int count, byte[] buffer) {
         mLock.lock();
         try {
             verifyNotClosed();
             verifyValidCount(count);
-            verifyBufferUseable(buffer, count);
+            verifyArrayContainsEnoughForCount(count, buffer.length);
 
-            ModbusJNI.readCoils3(mContextPtr, address, count, buffer);
-        } finally {
-            mLock.unlock();
-        }
-    }
-
-    public long readCoilsToBitField(int address, int count) {
-        mLock.lock();
-        try {
-            verifyNotClosed();
-            verifyValidCount(count);
-            verifyCountLimitedToLongBits(count);
-
-            return ModbusJNI.readCoils2(mContextPtr, address, count);
-        } finally {
-            mLock.unlock();
-        }
-    }
-
-    public boolean[] readDiscreteInputs(int address, int count) {
-        mLock.lock();
-        try {
-            verifyNotClosed();
-            verifyValidCount(count);
-
-            return ModbusJNI.readDiscreteInputs(mContextPtr, address, count);
+            ModbusJNI.readDiscreteInputs4(mContextPtr, address, count, buffer);
         } finally {
             mLock.unlock();
         }
@@ -73,15 +50,19 @@ public class ModbusClient implements Closeable {
         try {
             verifyNotClosed();
             verifyValidCount(count);
-            verifyBufferUseable(buffer, count);
+            verifyBufferUsableForRead(buffer, count);
 
-            ModbusJNI.readDiscreteInputs3(mContextPtr, address, count, buffer);
+            if (buffer.isDirect()) {
+                ModbusJNI.readDiscreteInputs3(mContextPtr, address, count, buffer);
+            } else {
+                ModbusJNI.readDiscreteInputs4(mContextPtr, address, count, buffer.array());
+            }
         } finally {
             mLock.unlock();
         }
     }
 
-    public long readDiscreteInputsToBitField(int address, int count) {
+    public long readDiscreteInputsAsBitField(int address, int count) {
         mLock.lock();
         try {
             verifyNotClosed();
@@ -94,25 +75,117 @@ public class ModbusClient implements Closeable {
         }
     }
 
-    public short[] readInputRegisters(int address, int count) {
+    public void readCoils(int address, int count, boolean[] buffer) {
         mLock.lock();
         try {
             verifyNotClosed();
             verifyValidCount(count);
+            verifyArrayContainsEnoughForCount(count, buffer.length);
 
-            return ModbusJNI.readInputRegisters(mContextPtr, address, count);
+            ModbusJNI.readCoils(mContextPtr, address, count, buffer);
         } finally {
             mLock.unlock();
         }
     }
 
-    public short[] readHoldingRegisters(int address, int count) {
+    public void readCoils(int address, int count, byte[] buffer) {
         mLock.lock();
         try {
             verifyNotClosed();
             verifyValidCount(count);
+            verifyArrayContainsEnoughForCount(count, buffer.length);
 
-            return ModbusJNI.readHoldingRegisters(mContextPtr, address, count);
+            ModbusJNI.readCoils4(mContextPtr, address, count, buffer);
+        } finally {
+            mLock.unlock();
+        }
+    }
+
+    public void readCoils(int address, int count, ByteBuffer buffer) {
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyBufferUsableForRead(buffer, count);
+
+            if (buffer.isDirect()) {
+                ModbusJNI.readCoils3(mContextPtr, address, count, buffer);
+            } else {
+                ModbusJNI.readCoils4(mContextPtr, address, count, buffer.array());
+            }
+        } finally {
+            mLock.unlock();
+        }
+    }
+
+    public long readCoilsAsBitField(int address, int count) {
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyCountLimitedToLongBits(count);
+
+            return ModbusJNI.readCoils2(mContextPtr, address, count);
+        } finally {
+            mLock.unlock();
+        }
+    }
+
+    public void readInputRegisters(int address, int count, short[] buffer) {
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyArrayContainsEnoughForCount(count, buffer.length);
+
+            ModbusJNI.readInputRegisters(mContextPtr, address, count, buffer);
+        } finally {
+            mLock.unlock();
+        }
+    }
+
+    public void readInputRegisters(int address, int count, ShortBuffer buffer) {
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyBufferUsableForRead(buffer, count);
+
+            if (buffer.isDirect()) {
+                ModbusJNI.readInputRegisters2(mContextPtr, address, count, buffer);
+            } else {
+                ModbusJNI.readInputRegisters(mContextPtr, address, count, buffer.array());
+            }
+        } finally {
+            mLock.unlock();
+        }
+    }
+
+    public void readHoldingRegisters(int address, int count, short[] buffer) {
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyArrayContainsEnoughForCount(count, buffer.length);
+
+            ModbusJNI.readHoldingRegisters(mContextPtr, address, count, buffer);
+        } finally {
+            mLock.unlock();
+        }
+    }
+
+    public void readHoldingRegisters(int address, int count, ShortBuffer buffer) {
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyBufferUsableForRead(buffer, count);
+
+            if (buffer.isDirect()) {
+                ModbusJNI.readHoldingRegisters2(mContextPtr, address, count, buffer);
+            } else {
+                ModbusJNI.readHoldingRegisters(mContextPtr, address, count, buffer.array());
+            }
         } finally {
             mLock.unlock();
         }
@@ -129,6 +202,17 @@ public class ModbusClient implements Closeable {
         }
     }
 
+    public void writeCoil(int address, byte value) {
+        mLock.lock();
+        try {
+            verifyNotClosed();
+
+            ModbusJNI.writeCoil2(mContextPtr, address, value);
+        } finally {
+            mLock.unlock();
+        }
+    }
+
     public void writeCoils(int address, int count, boolean[] values) {
         mLock.lock();
         try {
@@ -137,6 +221,36 @@ public class ModbusClient implements Closeable {
             verifyArrayContainsEnoughForCount(count, values.length);
 
             ModbusJNI.writeCoils(mContextPtr, address, count, values);
+        } finally {
+            mLock.unlock();
+        }
+    }
+
+    public void writeCoils(int address, int count, byte[] values) {
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyArrayContainsEnoughForCount(count, values.length);
+
+            ModbusJNI.writeCoils3(mContextPtr, address, count, values);
+        } finally {
+            mLock.unlock();
+        }
+    }
+
+    public void writeCoils(int address, int count, ByteBuffer buffer) {
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyBufferUsableForWrite(buffer, count);
+
+            if (buffer.isDirect()) {
+                ModbusJNI.writeCoils4(mContextPtr, address, count, buffer);
+            } else {
+                ModbusJNI.writeCoils3(mContextPtr, address, count, buffer.array());
+            }
         } finally {
             mLock.unlock();
         }
@@ -173,6 +287,34 @@ public class ModbusClient implements Closeable {
             verifyArrayContainsEnoughForCount(count, values.length);
 
             ModbusJNI.writeHoldingRegisters(mContextPtr, address, count, values);
+        } finally {
+            mLock.unlock();
+        }
+    }
+
+    public void writeHoldingRegisters(int address, int count, ShortBuffer buffer) {
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyBufferUsableForWrite(buffer, count);
+
+            if (buffer.isDirect()) {
+                ModbusJNI.writeHoldingRegisters2(mContextPtr, address, count, buffer);
+            } else {
+                ModbusJNI.writeHoldingRegisters(mContextPtr, address, count, buffer.array());
+            }
+        } finally {
+            mLock.unlock();
+        }
+    }
+
+    public void flush() {
+        mLock.lock();
+        try {
+            verifyNotClosed();
+
+            ModbusJNI.flush(mContextPtr);
         } finally {
             mLock.unlock();
         }
@@ -241,15 +383,17 @@ public class ModbusClient implements Closeable {
         }
     }
 
-    private void verifyBufferUseable(Buffer buffer, int neededSize) {
-        if (!buffer.isDirect()) {
-            throw new IllegalArgumentException("only direct buffers are supported");
-        }
+    private void verifyBufferUsableForRead(Buffer buffer, int neededSize) {
         if (buffer.isReadOnly()) {
             throw new IllegalArgumentException("buffer is read-only");
         }
-
         if (buffer.capacity() < neededSize) {
+            throw new IllegalArgumentException("buffer is too small");
+        }
+    }
+
+    private void verifyBufferUsableForWrite(Buffer buffer, int wantedSize) {
+        if (buffer.capacity() < wantedSize) {
             throw new IllegalArgumentException("buffer is too small");
         }
     }
