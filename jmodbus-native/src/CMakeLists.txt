@@ -16,8 +16,8 @@ link_directories(${libmodbus_LIBDIR})
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_library(modbus_jni SHARED
-        jni/placeholder.cpp
         jni/modbus_jni.cpp
-        jni/modbus_except.cpp jni/modbus_tcp_jni.cpp)
+        jni/modbus_except.cpp
+        jni/modbus_tcp_jni.cpp)
 
 target_link_libraries(modbus_jni ${libmodbus_LIBRARIES} jnikit)

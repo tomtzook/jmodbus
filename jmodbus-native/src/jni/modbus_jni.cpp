@@ -90,6 +90,41 @@ JNIEXPORT jbooleanArray JNICALL Java_jmodbus_ModbusJNI_readDiscreteInputs
 }
 
 extern "C"
+JNIEXPORT jlong JNICALL Java_jmodbus_ModbusJNI_readDiscreteInputs2
+        (JNIEnv* env, jclass obj, jlong ptr, jint address, jint count) {
+    return jnikit::context<jlong>(env, [ptr, address, count](jnikit::Env& env) -> jlong {
+        auto modbus_ctx = reinterpret_cast<modbus_t*>(ptr);
+
+        uint8_t buffer[32];
+        auto rc = modbus_read_input_bits(modbus_ctx, address, count, buffer);
+        CHECK_ERROR2(env, rc);
+
+        static_assert(sizeof(uint8_t) == sizeof(jboolean));
+
+        jlong value = 0;
+        for (int i = 0; i < count; ++i) {
+            if (buffer[i]) {
+                value |= (1ll << i);
+            }
+        }
+
+        return value;
+    });
+}
+
+extern "C"
+JNIEXPORT void JNICALL Java_jmodbus_ModbusJNI_readDiscreteInputs3
+        (JNIEnv* _env, jclass obj, jlong ptr, jint address, jint count, jobject jbuffer) {
+    jnikit::context<void>(_env, [_env, ptr, address, count, jbuffer](jnikit::Env& env) -> void {
+        auto modbus_ctx = reinterpret_cast<modbus_t*>(ptr);
+        auto buffer = reinterpret_cast<uint8_t*>(_env->GetDirectBufferAddress(jbuffer));
+
+        auto rc = modbus_read_input_bits(modbus_ctx, address, count, buffer);
+        CHECK_ERROR2(env, rc);
+    });
+}
+
+extern "C"
 JNIEXPORT jbooleanArray JNICALL Java_jmodbus_ModbusJNI_readCoils
         (JNIEnv* env, jclass obj, jlong ptr, jint address, jint count) {
     return jnikit::context<jbooleanArray>(env, [ptr, address, count](jnikit::Env& env) -> jbooleanArray {
@@ -105,6 +140,41 @@ JNIEXPORT jbooleanArray JNICALL Java_jmodbus_ModbusJNI_readCoils
         resultArray.fill(reinterpret_cast<jboolean*>(buffer), count);
 
         return resultArray.array();
+    });
+}
+
+extern "C"
+JNIEXPORT jlong JNICALL Java_jmodbus_ModbusJNI_readCoils2
+        (JNIEnv* env, jclass obj, jlong ptr, jint address, jint count) {
+    return jnikit::context<jlong>(env, [ptr, address, count](jnikit::Env& env) -> jlong {
+        auto modbus_ctx = reinterpret_cast<modbus_t*>(ptr);
+
+        uint8_t buffer[32];
+        auto rc = modbus_read_bits(modbus_ctx, address, count, buffer);
+        CHECK_ERROR2(env, rc);
+
+        static_assert(sizeof(uint8_t) == sizeof(jboolean));
+
+        jlong value = 0;
+        for (int i = 0; i < count; ++i) {
+            if (buffer[i]) {
+                value |= (1ll << i);
+            }
+        }
+
+        return value;
+    });
+}
+
+extern "C"
+JNIEXPORT void JNICALL Java_jmodbus_ModbusJNI_readCoils3
+        (JNIEnv* _env, jclass obj, jlong ptr, jint address, jint count, jobject jbuffer) {
+    jnikit::context<void>(_env, [_env, ptr, address, count, jbuffer](jnikit::Env& env) -> void {
+        auto modbus_ctx = reinterpret_cast<modbus_t*>(ptr);
+        auto buffer = reinterpret_cast<uint8_t*>(_env->GetDirectBufferAddress(jbuffer));
+
+        auto rc = modbus_read_bits(modbus_ctx, address, count, buffer);
+        CHECK_ERROR2(env, rc);
     });
 }
 
@@ -165,6 +235,22 @@ JNIEXPORT void JNICALL Java_jmodbus_ModbusJNI_writeCoils
         jnikit::Array<jnikit::types::Boolean> valueArray(_env, value);
         for (int i = 0; i < count; i++) {
             outArray[i] = valueArray.getElement(i);
+        }
+
+        auto rc = modbus_write_bits(modbus_ctx, address, count, outArray);
+        CHECK_ERROR2(env, rc);
+    });
+}
+
+extern "C"
+JNIEXPORT void JNICALL Java_jmodbus_ModbusJNI_writeCoils2
+        (JNIEnv* _env, jclass obj, jlong ptr, jint address, jint count, jlong value) {
+    jnikit::context<void>(_env, [_env, ptr, address, count, value](jnikit::Env& env) -> void {
+        auto modbus_ctx = reinterpret_cast<modbus_t*>(ptr);
+
+        uint8_t outArray[32] = {};
+        for (int i = 0; i < count; i++) {
+            outArray[i] = (value) & (1ll << i);
         }
 
         auto rc = modbus_write_bits(modbus_ctx, address, count, outArray);

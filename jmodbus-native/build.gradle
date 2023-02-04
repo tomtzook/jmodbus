@@ -57,7 +57,7 @@ compileMachineTargets.each { machine ->
     tasks.register("zipNative${machine.name}", Jar) {
         dependsOn(tasks.cmakeBuild)
 
-        def outputDir = cmake.outputDir.dir("sdl_jni/${machine.name}")
+        def outputDir = cmake.outputDir.dir("modbus_jni/${machine.name}")
         from outputDir.map {
             return it.asFileTree.matching {
                 include '**/*.dll'
