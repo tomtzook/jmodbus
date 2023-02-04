@@ -18,6 +18,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_library(modbus_jni SHARED
         jni/modbus_jni.cpp
         jni/modbus_except.cpp
-        jni/modbus_tcp_jni.cpp)
+        jni/modbus_tcp_jni.cpp jni/modbus_readcoil_jni.cpp jni/modbus_readdiscrete_jni.cpp jni/modbus_readinput_jni.cpp jni/modbus_readholding_jni.cpp jni/modbus_writecoil_jni.cpp jni/modbus_writeholding_jni.cpp)
 
 target_link_libraries(modbus_jni ${libmodbus_LIBRARIES} jnikit)
