@@ -3,129 +3,218 @@ package jmodbus;
 import java.io.Closeable;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ModbusClient implements Closeable {
 
     protected final long mContextPtr;
+    private final Lock mLock;
     private boolean mIsClosed;
 
     protected ModbusClient(long contextPtr) {
         mContextPtr = contextPtr;
+        mLock = new ReentrantLock();
         mIsClosed = false;
     }
 
     public boolean[] readCoils(int address, int count) {
-        verifyNotClosed();
-        verifyValidCount(count);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
 
-        return ModbusJNI.readCoils(mContextPtr, address, count);
+            return ModbusJNI.readCoils(mContextPtr, address, count);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public void readCoils(int address, int count, ByteBuffer buffer) {
-        verifyNotClosed();
-        verifyValidCount(count);
-        verifyBufferUseable(buffer, count);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyBufferUseable(buffer, count);
 
-        ModbusJNI.readCoils3(mContextPtr, address, count, buffer);
+            ModbusJNI.readCoils3(mContextPtr, address, count, buffer);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public long readCoilsToBitField(int address, int count) {
-        verifyNotClosed();
-        verifyValidCount(count);
-        verifyCountLimitedToLongBits(count);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyCountLimitedToLongBits(count);
 
-        return ModbusJNI.readCoils2(mContextPtr, address, count);
+            return ModbusJNI.readCoils2(mContextPtr, address, count);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public boolean[] readDiscreteInputs(int address, int count) {
-        verifyNotClosed();
-        verifyValidCount(count);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
 
-        return ModbusJNI.readDiscreteInputs(mContextPtr, address, count);
+            return ModbusJNI.readDiscreteInputs(mContextPtr, address, count);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public void readDiscreteInputs(int address, int count, ByteBuffer buffer) {
-        verifyNotClosed();
-        verifyValidCount(count);
-        verifyBufferUseable(buffer, count);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyBufferUseable(buffer, count);
 
-        ModbusJNI.readDiscreteInputs3(mContextPtr, address, count, buffer);
+            ModbusJNI.readDiscreteInputs3(mContextPtr, address, count, buffer);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public long readDiscreteInputsToBitField(int address, int count) {
-        verifyNotClosed();
-        verifyValidCount(count);
-        verifyCountLimitedToLongBits(count);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyCountLimitedToLongBits(count);
 
-        return ModbusJNI.readDiscreteInputs2(mContextPtr, address, count);
+            return ModbusJNI.readDiscreteInputs2(mContextPtr, address, count);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public short[] readInputRegisters(int address, int count) {
-        verifyNotClosed();
-        verifyValidCount(count);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
 
-        return ModbusJNI.readInputRegisters(mContextPtr, address, count);
+            return ModbusJNI.readInputRegisters(mContextPtr, address, count);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public short[] readHoldingRegisters(int address, int count) {
-        verifyNotClosed();
-        verifyValidCount(count);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
 
-        return ModbusJNI.readHoldingRegisters(mContextPtr, address, count);
+            return ModbusJNI.readHoldingRegisters(mContextPtr, address, count);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public void writeCoil(int address, boolean value) {
-        verifyNotClosed();
+        mLock.lock();
+        try {
+            verifyNotClosed();
 
-        ModbusJNI.writeCoil(mContextPtr, address, value);
+            ModbusJNI.writeCoil(mContextPtr, address, value);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public void writeCoils(int address, int count, boolean[] values) {
-        verifyNotClosed();
-        verifyValidCount(count);
-        verifyArrayContainsEnoughForCount(count, values.length);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyArrayContainsEnoughForCount(count, values.length);
 
-        ModbusJNI.writeCoils(mContextPtr, address, count, values);
+            ModbusJNI.writeCoils(mContextPtr, address, count, values);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public void writeCoilsFromBitField(int address, int count, long values) {
-        verifyNotClosed();
-        verifyValidCount(count);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
 
-        ModbusJNI.writeCoils2(mContextPtr, address, count, values);
+            ModbusJNI.writeCoils2(mContextPtr, address, count, values);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public void writeHoldingRegister(int address, short value) {
-        verifyNotClosed();
+        mLock.lock();
+        try {
+            verifyNotClosed();
 
-        ModbusJNI.writeHoldingRegister(mContextPtr, address, value);
+            ModbusJNI.writeHoldingRegister(mContextPtr, address, value);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public void writeHoldingRegisters(int address, int count, short[] values) {
-        verifyNotClosed();
-        verifyValidCount(count);
-        verifyArrayContainsEnoughForCount(count, values.length);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+            verifyValidCount(count);
+            verifyArrayContainsEnoughForCount(count, values.length);
 
-        ModbusJNI.writeHoldingRegisters(mContextPtr, address, count, values);
+            ModbusJNI.writeHoldingRegisters(mContextPtr, address, count, values);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public void connect() {
-        ModbusJNI.connect(mContextPtr);
+        mLock.lock();
+        try {
+            ModbusJNI.connect(mContextPtr);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public void setDebugEnabled(boolean isEnabled) {
-        ModbusJNI.setDebug(mContextPtr, isEnabled);
+        mLock.lock();
+        try {
+            ModbusJNI.setDebug(mContextPtr, isEnabled);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public void setSlave(int slave) {
-        ModbusJNI.setSlave(mContextPtr, slave);
+        mLock.lock();
+        try {
+            ModbusJNI.setSlave(mContextPtr, slave);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     @Override
     public void close() {
-        ModbusJNI.close(mContextPtr);
-        ModbusJNI.free(mContextPtr);
-        mIsClosed = true;
+        mLock.lock();
+        try {
+            ModbusJNI.close(mContextPtr);
+            ModbusJNI.free(mContextPtr);
+            mIsClosed = true;
+        } finally {
+            mLock.unlock();
+        }
     }
 
     private void verifyNotClosed() {
