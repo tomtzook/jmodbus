@@ -1,0 +1,111 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+}
+
+apply from: rootProject.file('extras.gradle')
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.4.2'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.4.2'
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.2.0'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.23.4'
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '2.23.0'
+    testImplementation group: 'org.hamcrest', name: 'hamcrest', version: '2.1'
+}
+
+test {
+    useJUnitPlatform()
+
+    testLogging {
+        events "failed"
+        exceptionFormat "full"
+        showStackTraces true
+    }
+}
+
+jar {
+    archiveBaseName.set(project.name)
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveBaseName.set(project.name)
+    archiveClassifier.set('sources')
+
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveBaseName.set(project.name)
+    archiveClassifier.set('javadoc')
+
+    from javadoc.destinationDir
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
+                name = 'jmodbus'
+                description = 'Java Bindings for libmodbus'
+                url = 'https://github.com/tomtzook/jmodbus'
+
+                licenses {
+                    license {
+                        name = 'Apache License 2.0'
+                        url = ' http://www.apache.org/licenses/LICENSE-2.0'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'tomtzook'
+                        name = 'Tom Tzook'
+                        email = 'tomtzook@gmail.com'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com/tomtzook/jmodbus.git'
+                    developerConnection = 'scm:git:ssh://github.com/tomtzook/jmodbus.git'
+                    url = 'https://github.com/tomtzook/jmodbus'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            if (isReleaseBuild()) {
+                name = 'NexusStaging'
+                url = NEXUS_RELEASE_REPOSITORY_URL
+            } else {
+                name = 'NexusSnapshot'
+                url = NEXUS_SNAPSHOT_REPOSITORY_URL
+            }
+
+            credentials {
+                username getNexusUsername()
+                password getNexusPassword()
+            }
+        }
+    }
+}
+
+if (shouldSign()) {
+    signing {
+        sign publishing.publications.mavenJava
+    }
+}

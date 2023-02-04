@@ -1,0 +1,3 @@
+[submodule "jmodbus-native/src/jnikit"]
+	path = jmodbus-native/src/jnikit
+	url = git@github.com:tomtzook/jnikit.git

@@ -1,0 +1,117 @@
+plugins {
+    id "io.github.tomtzook.gradle-cmake" version "1.2.1"
+    id 'maven-publish'
+    id 'signing'
+}
+
+apply from: rootProject.file('extras.gradle')
+
+machines.customMachines.register("windows-x86_x64") {
+    it.toolchainFile.set(rootProject.file('platforms/x86_64-mingw-gcc.cmake'))
+}
+machines.customMachines.register("linux-gnueabihf-arm") {
+    it.toolchainFile.set(rootProject.file('platforms/arm-linux-gnueabihf-gcc.cmake'))
+}
+machines.customMachines.register("linux-aarch64") {
+    it.toolchainFile.set(rootProject.file('platforms/aarch64-linux-gnu-gcc.cmake'))
+}
+
+def compileMachineTargets = [machines.host]
+
+if (project.hasProperty('crosscompile')) {
+    compileMachineTargets.addAll(machines.customMachines)
+}
+
+cmake {
+    targets {
+        modbus_jni {
+            cmakeLists.set(file('src/CMakeLists.txt'))
+            targetMachines.addAll(compileMachineTargets)
+        }
+    }
+}
+
+tasks.clean.dependsOn tasks.cmakeClean
+tasks.build.dependsOn tasks.cmakeBuild
+
+publishing {
+    repositories {
+        maven {
+            if (isReleaseBuild()) {
+                name = 'NexusStaging'
+                url = NEXUS_RELEASE_REPOSITORY_URL
+            } else {
+                name = 'NexusSnapshot'
+                url = NEXUS_SNAPSHOT_REPOSITORY_URL
+            }
+
+            credentials {
+                username getNexusUsername()
+                password getNexusPassword()
+            }
+        }
+    }
+}
+
+compileMachineTargets.each { machine ->
+    tasks.register("zipNative${machine.name}", Jar) {
+        dependsOn(tasks.cmakeBuild)
+
+        def outputDir = cmake.outputDir.dir("sdl_jni/${machine.name}")
+        from outputDir.map {
+            return it.asFileTree.matching {
+                include '**/*.dll'
+                include '**/*.so'
+                exclude '**/CMakeFiles/**'
+            }
+        }
+
+        archiveBaseName.set("${project.name}-jni")
+        archiveClassifier.set(machine.name)
+    }
+}
+
+publishing {
+    publications {
+        mavenJni(MavenPublication) {
+            artifactId = "jmodbus-jni"
+
+            compileMachineTargets.each { machine ->
+                artifact tasks."zipNative${machine.name}"
+            }
+
+            pom {
+                name = "jmodbus-jni"
+                description = 'Java Bindings for libmodbus (JNI)'
+                url = 'https://github.com/tomtzook/jmodbus'
+
+                licenses {
+                    license {
+                        name = 'Apache License 2.0'
+                        url = ' http://www.apache.org/licenses/LICENSE-2.0'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'tomtzook'
+                        name = 'Tom Tzook'
+                        email = 'tomtzook@gmail.com'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com/tomtzook/jmodbus.git'
+                    developerConnection = 'scm:git:ssh://github.com/tomtzook/jmodbus.git'
+                    url = 'https://github.com/tomtzook/jmodbus'
+                }
+            }
+        }
+    }
+}
+
+if (shouldSign()) {
+    signing {
+        sign publishing.publications.mavenJni
+    }
+}
