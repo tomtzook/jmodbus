@@ -3,7 +3,6 @@ package jmodbus;
 import java.io.Closeable;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
-import java.nio.ShortBuffer;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -17,19 +16,6 @@ public class ModbusClient implements Closeable {
         mContextPtr = contextPtr;
         mLock = new ReentrantLock();
         mIsClosed = false;
-    }
-
-    public void readDiscreteInputs(int address, int count, boolean[] buffer) {
-        mLock.lock();
-        try {
-            verifyNotClosed();
-            verifyValidCount(count);
-            verifyArrayContainsEnoughForCount(count, buffer.length);
-
-            ModbusJNI.readDiscreteInputs(mContextPtr, address, count, buffer);
-        } finally {
-            mLock.unlock();
-        }
     }
 
     public void readDiscreteInputs(int address, int count, byte[] buffer) {
@@ -72,19 +58,6 @@ public class ModbusClient implements Closeable {
             verifyCountLimitedToLongBits(count);
 
             return ModbusJNI.readDiscreteInputs2(mContextPtr, address, count);
-        } finally {
-            mLock.unlock();
-        }
-    }
-
-    public void readCoils(int address, int count, boolean[] buffer) {
-        mLock.lock();
-        try {
-            verifyNotClosed();
-            verifyValidCount(count);
-            verifyArrayContainsEnoughForCount(count, buffer.length);
-
-            ModbusJNI.readCoils(mContextPtr, address, count, buffer);
         } finally {
             mLock.unlock();
         }
@@ -148,25 +121,6 @@ public class ModbusClient implements Closeable {
         }
     }
 
-    public void readInputRegisters(int address, int count, ShortBuffer buffer) {
-        mLock.lock();
-        try {
-            verifyNotClosed();
-            verifyValidCount(count);
-            verifyBufferUsableForRead(buffer, count);
-
-            if (buffer.isDirect()) {
-                ModbusJNI.readInputRegisters2(mContextPtr, address, count, buffer);
-            } else if (buffer.hasArray()) {
-                ModbusJNI.readInputRegisters(mContextPtr, address, count, buffer.array());
-            } else {
-                throw new UnsupportedOperationException("buffer which is proxy to another cannot be used");
-            }
-        } finally {
-            mLock.unlock();
-        }
-    }
-
     public void readInputRegisters(int address, int count, byte[] buffer) {
         mLock.lock();
         try {
@@ -212,25 +166,6 @@ public class ModbusClient implements Closeable {
         }
     }
 
-    public void readHoldingRegisters(int address, int count, ShortBuffer buffer) {
-        mLock.lock();
-        try {
-            verifyNotClosed();
-            verifyValidCount(count);
-            verifyBufferUsableForRead(buffer, count);
-
-            if (buffer.isDirect()) {
-                ModbusJNI.readHoldingRegisters2(mContextPtr, address, count, buffer);
-            } else if (buffer.hasArray()) {
-                ModbusJNI.readHoldingRegisters(mContextPtr, address, count, buffer.array());
-            } else {
-                throw new UnsupportedOperationException("buffer which is proxy to another cannot be used");
-            }
-        } finally {
-            mLock.unlock();
-        }
-    }
-
     public void readHoldingRegisters(int address, int count, byte[] buffer) {
         mLock.lock();
         try {
@@ -263,36 +198,12 @@ public class ModbusClient implements Closeable {
         }
     }
 
-    public void writeCoil(int address, boolean value) {
-        mLock.lock();
-        try {
-            verifyNotClosed();
-
-            ModbusJNI.writeCoil(mContextPtr, address, value);
-        } finally {
-            mLock.unlock();
-        }
-    }
-
     public void writeCoil(int address, byte value) {
         mLock.lock();
         try {
             verifyNotClosed();
 
             ModbusJNI.writeCoil2(mContextPtr, address, value);
-        } finally {
-            mLock.unlock();
-        }
-    }
-
-    public void writeCoils(int address, int count, boolean[] values) {
-        mLock.lock();
-        try {
-            verifyNotClosed();
-            verifyValidCount(count);
-            verifyArrayContainsEnoughForCount(count, values.length);
-
-            ModbusJNI.writeCoils(mContextPtr, address, count, values);
         } finally {
             mLock.unlock();
         }
@@ -361,25 +272,6 @@ public class ModbusClient implements Closeable {
             verifyArrayContainsEnoughForCount(count, values.length);
 
             ModbusJNI.writeHoldingRegisters(mContextPtr, address, count, values);
-        } finally {
-            mLock.unlock();
-        }
-    }
-
-    public void writeHoldingRegisters(int address, int count, ShortBuffer buffer) {
-        mLock.lock();
-        try {
-            verifyNotClosed();
-            verifyValidCount(count);
-            verifyBufferUsableForWrite(buffer, count);
-
-            if (buffer.isDirect()) {
-                ModbusJNI.writeHoldingRegisters2(mContextPtr, address, count, buffer);
-            } else if (buffer.hasArray()) {
-                ModbusJNI.writeHoldingRegisters(mContextPtr, address, count, buffer.array());
-            } else {
-                throw new UnsupportedOperationException("buffer which is proxy to another cannot be used");
-            }
         } finally {
             mLock.unlock();
         }
@@ -462,6 +354,30 @@ public class ModbusClient implements Closeable {
         } finally {
             mLock.unlock();
         }
+    }
+
+    public void setResponseTimeout(TimeValue timeout) {
+        ModbusJNI.setResponseTimeout(mContextPtr, timeout);
+    }
+
+    public TimeValue getResponseTimeout() {
+        return ModbusJNI.getResponseTimeout(mContextPtr);
+    }
+
+    public void setByteTimeout(TimeValue timeout) {
+        ModbusJNI.setByteTimeout(mContextPtr, timeout);
+    }
+
+    public TimeValue getByteTimeout() {
+        return ModbusJNI.getByteTimeout(mContextPtr);
+    }
+
+    public void setIndicationTimeout(TimeValue timeout) {
+        ModbusJNI.setIndicationTimeout(mContextPtr, timeout);
+    }
+
+    public TimeValue getIndicationTimeout() {
+        return ModbusJNI.getIndicationTimeout(mContextPtr);
     }
 
     @Override

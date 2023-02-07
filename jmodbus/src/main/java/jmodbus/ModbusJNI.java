@@ -17,6 +17,13 @@ public class ModbusJNI {
     public static native void setSlave(long contextPtr, int slave);
     public static native int getSlave(long contextPtr);
 
+    public static native void setResponseTimeout(long contextPtr, TimeValue value);
+    public static native TimeValue getResponseTimeout(long contextPtr);
+    public static native void setByteTimeout(long contextPtr, TimeValue value);
+    public static native TimeValue getByteTimeout(long contextPtr);
+    public static native void setIndicationTimeout(long contextPtr, TimeValue value);
+    public static native TimeValue getIndicationTimeout(long contextPtr);
+
     public static native void readCoils(long contextPtr, int address, int count, boolean[] buffer);
     public static native long readCoils2(long contextPtr, int address, int count);
     public static native void readCoils3(long contextPtr, int address, int count, Buffer buffer);
