@@ -17,6 +17,8 @@ DEFINE_OBJECT_TYPE(GatewayPathException, "jmodbus/GatewayPathException")
 DEFINE_OBJECT_TYPE(GatewayTargetException, "jmodbus/GatewayTargetException")
 
 
+#define IS_ERROR(__env, __rc)  (__rc < 0)
+
 #define CHECK_ERROR(__env, __VA_ARGS__) \
 do {                             \
     auto __rc = __VA_ARGS__;     \
