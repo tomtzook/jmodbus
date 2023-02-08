@@ -7,10 +7,24 @@ public class ModbusRtuClient extends ModbusClient {
     }
 
     public void setDelayMicroseconds(int delay) {
-        ModbusRtuJNI.setDelayMicroseconds(delay);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+
+            ModbusRtuJNI.setDelayMicroseconds(delay);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public int getDelayMicroseconds() {
-        return ModbusRtuJNI.getDelayMicroseconds();
+        mLock.lock();
+        try {
+            verifyNotClosed();
+
+            return ModbusRtuJNI.getDelayMicroseconds();
+        } finally {
+            mLock.unlock();
+        }
     }
 }

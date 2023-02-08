@@ -5,8 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(jnikit)
 
-find_package(JNI REQUIRED)
-
 find_package(PkgConfig)
 pkg_search_module(libmodbus REQUIRED libmodbus)
 

@@ -9,7 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ModbusClient implements Closeable {
 
     protected final long mContextPtr;
-    private final Lock mLock;
+    protected final Lock mLock;
     private boolean mIsClosed;
 
     protected ModbusClient(long contextPtr) {
@@ -323,6 +323,8 @@ public class ModbusClient implements Closeable {
     public void connect() {
         mLock.lock();
         try {
+            verifyNotClosed();
+
             ModbusJNI.connect(mContextPtr);
         } finally {
             mLock.unlock();
@@ -332,6 +334,8 @@ public class ModbusClient implements Closeable {
     public void setDebugEnabled(boolean isEnabled) {
         mLock.lock();
         try {
+            verifyNotClosed();
+
             ModbusJNI.setDebug(mContextPtr, isEnabled);
         } finally {
             mLock.unlock();
@@ -341,6 +345,8 @@ public class ModbusClient implements Closeable {
     public void setSlave(int slave) {
         mLock.lock();
         try {
+            verifyNotClosed();
+
             ModbusJNI.setSlave(mContextPtr, slave);
         } finally {
             mLock.unlock();
@@ -350,6 +356,8 @@ public class ModbusClient implements Closeable {
     public int getSlave() {
         mLock.lock();
         try {
+            verifyNotClosed();
+
             return ModbusJNI.getSlave(mContextPtr);
         } finally {
             mLock.unlock();
@@ -357,27 +365,69 @@ public class ModbusClient implements Closeable {
     }
 
     public void setResponseTimeout(TimeValue timeout) {
-        ModbusJNI.setResponseTimeout(mContextPtr, timeout);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+
+            ModbusJNI.setResponseTimeout(mContextPtr, timeout);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public TimeValue getResponseTimeout() {
-        return ModbusJNI.getResponseTimeout(mContextPtr);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+
+            return ModbusJNI.getResponseTimeout(mContextPtr);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public void setByteTimeout(TimeValue timeout) {
-        ModbusJNI.setByteTimeout(mContextPtr, timeout);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+
+            ModbusJNI.setByteTimeout(mContextPtr, timeout);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public TimeValue getByteTimeout() {
-        return ModbusJNI.getByteTimeout(mContextPtr);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+
+            return ModbusJNI.getByteTimeout(mContextPtr);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public void setIndicationTimeout(TimeValue timeout) {
-        ModbusJNI.setIndicationTimeout(mContextPtr, timeout);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+
+            ModbusJNI.setIndicationTimeout(mContextPtr, timeout);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     public TimeValue getIndicationTimeout() {
-        return ModbusJNI.getIndicationTimeout(mContextPtr);
+        mLock.lock();
+        try {
+            verifyNotClosed();
+
+            return ModbusJNI.getIndicationTimeout(mContextPtr);
+        } finally {
+            mLock.unlock();
+        }
     }
 
     @Override
@@ -392,7 +442,7 @@ public class ModbusClient implements Closeable {
         }
     }
 
-    private void verifyNotClosed() {
+    protected void verifyNotClosed() {
         if (mIsClosed) {
             throw new IllegalStateException("already closed");
         }

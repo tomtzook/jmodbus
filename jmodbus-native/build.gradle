@@ -6,9 +6,6 @@ plugins {
 
 apply from: rootProject.file('extras.gradle')
 
-machines.customMachines.register("windows-x86_x64") {
-    it.toolchainFile.set(rootProject.file('platforms/x86_64-mingw-gcc.cmake'))
-}
 machines.customMachines.register("linux-gnueabihf-arm") {
     it.toolchainFile.set(rootProject.file('platforms/arm-linux-gnueabihf-gcc.cmake'))
 }

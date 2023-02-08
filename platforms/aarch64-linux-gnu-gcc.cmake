@@ -7,6 +7,7 @@ set(CMAKE_AR "aarch64-linux-gnu-ar" CACHE FILEPATH Archiver)
 set(CMAKE_RANLIB "aarch64-linux-gnu-ranlib" CACHE FILEPATH Indexer)
 
 set(CMAKE_FIND_ROOT_PATH /usr/aarch64-linux-gnu)
+set(CMAKE_PREFIX_PATH /usr/aarch64-linux-gnu)
 
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
