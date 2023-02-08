@@ -1,3 +1,6 @@
 [submodule "jmodbus-native/src/jnikit"]
 	path = jmodbus-native/src/jnikit
 	url = https://github.com/tomtzook/jnikit.git
+[submodule "cmake-toolchain-files"]
+	path = cmake-toolchain-files
+	url = https://github.com/tomtzook/cmake-toolchain-files.git
