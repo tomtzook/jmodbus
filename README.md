@@ -1,5 +1,7 @@
 # jmodbus
 
+![maven central](https://img.shields.io/maven-central/v/com.github.tomtzook/jmodbus)
+
 A java integration for [libmodbus](https://github.com/stephane/libmodbus/)
 Basically using JNI wrappers to supply _libmodbus_ functionality, while providing some integrations
 for java structures and such.
