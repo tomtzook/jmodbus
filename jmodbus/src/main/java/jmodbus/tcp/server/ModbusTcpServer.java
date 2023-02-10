@@ -65,7 +65,7 @@ public class ModbusTcpServer extends ModbusContextBase {
         }
     }
 
-    public void replayClient(ByteBuffer requestBuffer, int requestSize) {
+    public void replyClient(ByteBuffer requestBuffer, int requestSize) {
         mLock.lock();
         try {
             verifyNotClosed();
