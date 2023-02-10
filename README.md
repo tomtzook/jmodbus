@@ -10,6 +10,28 @@ Only supporting _TCP/Serial-RTU clients and TCP server_ for now.
 
 ## Usage
 
+_jmodbus_ is published to _maven central_. For _gradle_, use
+```groovy
+// for the java API
+implementation group: 'com.github.tomtzook', name: 'jmodbus', version: version
+// for the JNI natives
+implementation group: 'com.github.tomtzook', name: 'jmodbus-jni', version: '0.3.0', classifier: 'linux-amd64'
+```
+
+The `classifier` specifies the platform which is used, can be one of:
+- `linux-aarch64`
+- `linux-amd64`
+- `linux-gnueabihf-arm`
+- `windows-x86_x64`
+
+Load the natives from the _jni_ dependency. Can be done easily with [_castle_](https://github.com/tomtzook/Castle):
+```java
+Natives.newLoader()
+        .load("modbus_jni");
+```
+
+_libmodbus_ should be already installed on the system.
+
 ### Using a TCP client
 
 ```java
