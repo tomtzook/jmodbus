@@ -21,9 +21,9 @@ public class Modbus {
         return new ModbusClient(contextPtr);
     }
 
-    public static ModbusTcpServer newTcpServer(String ipAddress, int port, int acceptedClientsCount, Registers registers) {
+    public static ModbusTcpServer newTcpServer(String ipAddress, int port, int backlogSize, Registers registers) {
         long contextPtr = ModbusTcpJNI.newModbusContext(ipAddress, port);
-        return new ModbusTcpServer(contextPtr, acceptedClientsCount, registers);
+        return new ModbusTcpServer(contextPtr, backlogSize, registers);
     }
 
     public static ModbusRtuClient newRtuClient(String port,

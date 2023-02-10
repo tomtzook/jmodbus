@@ -69,7 +69,7 @@ try (ModbusClient client = Modbus.newRtuClient(
 ### Using a TCP server
 
 ```java
-final int maxAllowedConnectedClients = 2;
+final int maxBacklogSize = 2;
 final int numberOfDiscreteBits = 2;
 final int numberOfCoils = 2;
 final int numberOfInputRegisters = 2;
@@ -86,7 +86,7 @@ Registers registers = new Registers(
 
 try (ModbusTcpServer server = Modbus.newTcpServer(
         "0.0.0.0", 5000,
-        maxAllowedConnectedClients,
+        maxBacklogSize,
         registers
 )) {
     

@@ -92,10 +92,10 @@ static jobject contextOpToJava(jnikit::Env& env, TcpServerContext* server_ctx) {
 
 extern "C"
 JNIEXPORT jlong JNICALL Java_jmodbus_tcp_server_ModbusTcpServerJNI_init
-        (JNIEnv* _env, jclass obj, jlong ptr, jint client_count, jobject registers) {
-    return jnikit::context<jlong>(_env, [_env, ptr, client_count, registers](jnikit::Env& env) -> jlong {
+        (JNIEnv* _env, jclass obj, jlong ptr, jint backlog_size, jobject registers) {
+    return jnikit::context<jlong>(_env, [_env, ptr, backlog_size, registers](jnikit::Env& env) -> jlong {
         auto modbus_ctx = reinterpret_cast<modbus_t*>(ptr);
-        int rc = modbus_tcp_listen(modbus_ctx, client_count);
+        int rc = modbus_tcp_listen(modbus_ctx, backlog_size);
         CHECK_ERROR2(env, rc);
 
         // TODO: free rc on error

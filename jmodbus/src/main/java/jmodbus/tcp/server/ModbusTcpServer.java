@@ -10,12 +10,12 @@ public class ModbusTcpServer extends ModbusContextBase {
     private final long mServerCtxPtr;
     private final Registers mRegisters;
 
-    public ModbusTcpServer(long contextPtr, int numberOfClients, Registers registers) {
+    public ModbusTcpServer(long contextPtr, int backlogSize, Registers registers) {
         super(contextPtr);
         mRegisters = registers;
 
         try {
-            mServerCtxPtr = ModbusTcpServerJNI.init(contextPtr, numberOfClients, registers);
+            mServerCtxPtr = ModbusTcpServerJNI.init(contextPtr, backlogSize, registers);
         } catch (Throwable t) {
             super.close();
             throw t;

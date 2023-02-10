@@ -8,7 +8,7 @@ public class ModbusTcpServerJNI {
 
     private ModbusTcpServerJNI() {}
 
-    public static native long init(long contextPtr, int numberOfClients, Registers registers);
+    public static native long init(long contextPtr, int backlogSize, Registers registers);
     public static native void close(long serverCtxPtr);
 
     public static native PendingDataType waitForNewData(long contextPtr, long serverCtxPtr);
