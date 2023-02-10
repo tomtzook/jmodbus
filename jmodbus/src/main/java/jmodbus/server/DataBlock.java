@@ -27,7 +27,7 @@ public class DataBlock {
         return mSize;
     }
 
-    public ByteBuffer getBuffer() {
+    protected ByteBuffer getBuffer() {
         return mData;
     }
 
