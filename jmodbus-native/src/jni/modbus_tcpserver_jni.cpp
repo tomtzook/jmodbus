@@ -2,8 +2,22 @@
 #include <jnikit.h>
 #include <modbus.h>
 #include <modbus-tcp.h>
-#include <netinet/in.h>
 #include <cstring>
+
+#if defined(_WIN32)
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#define close closesocket
+#else
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+#if defined(__OpenBSD__) || (defined(__FreeBSD__) && __FreeBSD__ < 5)
+# define OS_BSD
+# include <netinet/in_systm.h>
+#endif
+#include <netinet/in.h>
+#endif
 
 #include "modbus_except.h"
 #include "modbus_registers.h"

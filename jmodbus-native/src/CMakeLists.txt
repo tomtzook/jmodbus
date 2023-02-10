@@ -28,4 +28,9 @@ add_library(modbus_jni SHARED
         jni/modbus_registers.cpp
         jni/modbus_registers.h)
 
+if(WIN32)
+    message(STATUS "WIN32")
+    target_link_libraries(modbus_jni -lwsock32)
+endif()
+
 target_link_libraries(modbus_jni ${libmodbus_LIBRARIES} jnikit)
