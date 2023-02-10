@@ -37,3 +37,8 @@ void throw_modbus_error(jnikit::Env& env, int error_code) {
             break;
     }
 }
+
+void throw_modbus_io_error(jnikit::Env& env) {
+    auto str_error = modbus_strerror(errno);
+    env.throwException<ModbusIoException>(str_error);
+}

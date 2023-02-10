@@ -15,9 +15,10 @@ DEFINE_OBJECT_TYPE(SlaveOrServerBusyException, "jmodbus/SlaveOrServerBusyExcepti
 DEFINE_OBJECT_TYPE(MemoryParityException, "jmodbus/MemoryParityException")
 DEFINE_OBJECT_TYPE(GatewayPathException, "jmodbus/GatewayPathException")
 DEFINE_OBJECT_TYPE(GatewayTargetException, "jmodbus/GatewayTargetException")
+DEFINE_OBJECT_TYPE(ModbusIoException, "jmodbus/ModbusIoException")
 
 
-#define IS_ERROR(__env, __rc)  (__rc < 0)
+#define IS_ERROR(__rc)  (__rc < 0)
 
 #define CHECK_ERROR(__env, __VA_ARGS__) \
 do {                             \
@@ -41,3 +42,4 @@ do {                             \
 
 
 void throw_modbus_error(jnikit::Env& env, int error_code);
+void throw_modbus_io_error(jnikit::Env& env);

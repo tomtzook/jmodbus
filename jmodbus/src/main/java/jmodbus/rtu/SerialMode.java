@@ -1,4 +1,4 @@
-package jmodbus;
+package jmodbus.rtu;
 
 public enum SerialMode {
     RS232(0),

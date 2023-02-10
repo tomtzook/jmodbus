@@ -1,4 +1,6 @@
-package jmodbus;
+package jmodbus.rtu;
+
+import jmodbus.ModbusClient;
 
 public class ModbusRtuClient extends ModbusClient {
 

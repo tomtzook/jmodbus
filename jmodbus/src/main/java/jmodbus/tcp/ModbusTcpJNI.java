@@ -1,4 +1,4 @@
-package jmodbus;
+package jmodbus.tcp;
 
 public class ModbusTcpJNI {
 

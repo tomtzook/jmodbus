@@ -1,4 +1,4 @@
-package jmodbus;
+package jmodbus.rtu;
 
 public enum Databit {
     BYTESIZE_5(5),

@@ -1,21 +1,12 @@
 package jmodbus;
 
-import java.io.Closeable;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
-public class ModbusClient implements Closeable {
-
-    protected final long mContextPtr;
-    protected final Lock mLock;
-    private boolean mIsClosed;
+public class ModbusClient extends ModbusContextBase {
 
     protected ModbusClient(long contextPtr) {
-        mContextPtr = contextPtr;
-        mLock = new ReentrantLock();
-        mIsClosed = false;
+        super(contextPtr);
     }
 
     public void readDiscreteInputs(int address, int count, byte[] buffer) {
@@ -427,24 +418,6 @@ public class ModbusClient implements Closeable {
             return ModbusJNI.getIndicationTimeout(mContextPtr);
         } finally {
             mLock.unlock();
-        }
-    }
-
-    @Override
-    public void close() {
-        mLock.lock();
-        try {
-            ModbusJNI.close(mContextPtr);
-            ModbusJNI.free(mContextPtr);
-            mIsClosed = true;
-        } finally {
-            mLock.unlock();
-        }
-    }
-
-    protected void verifyNotClosed() {
-        if (mIsClosed) {
-            throw new IllegalStateException("already closed");
         }
     }
 

@@ -1,4 +1,4 @@
-package jmodbus;
+package jmodbus.rtu;
 
 public enum Stopbit {
     STOPBIT_1(1),

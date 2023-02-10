@@ -1,4 +1,4 @@
-package jmodbus;
+package jmodbus.rtu;
 
 public class ModbusRtuJNI {
 

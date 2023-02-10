@@ -23,6 +23,9 @@ add_library(modbus_jni SHARED
         jni/modbus_readholding_jni.cpp
         jni/modbus_writecoil_jni.cpp
         jni/modbus_writeholding_jni.cpp
-        jni/modbus_rtu_jni.cpp)
+        jni/modbus_rtu_jni.cpp
+        jni/modbus_tcpserver_jni.cpp
+        jni/modbus_registers.cpp
+        jni/modbus_registers.h)
 
 target_link_libraries(modbus_jni ${libmodbus_LIBRARIES} jnikit)

@@ -7,7 +7,7 @@
 
 
 extern "C"
-JNIEXPORT jlong JNICALL Java_jmodbus_ModbusTcpJNI_newModbusContext
+JNIEXPORT jlong JNICALL Java_jmodbus_tcp_ModbusTcpJNI_newModbusContext
         (JNIEnv* _env, jclass obj, jstring ip, jint port) {
     return jnikit::context<jlong>(_env, [_env, ip, port](jnikit::Env& env) -> jlong {
         const char* native_ip = _env->GetStringUTFChars(ip, nullptr);
