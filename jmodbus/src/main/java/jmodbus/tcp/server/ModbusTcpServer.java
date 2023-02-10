@@ -26,52 +26,13 @@ public class ModbusTcpServer extends ModbusContextBase {
         return mRegisters;
     }
 
-    public PendingDataType waitForNewData() {
+    public ServerDataUpdate waitForNewData() {
         mLock.lock();
         try {
             verifyNotClosed();
 
-            return ModbusTcpServerJNI.waitForNewData(mContextPtr, mServerCtxPtr);
-        } finally {
-            mLock.unlock();
-        }
-    }
-
-    public void accept() {
-        mLock.lock();
-        try {
-            verifyNotClosed();
-
-            ModbusTcpServerJNI.acceptNewClient(mContextPtr, mServerCtxPtr);
-        } finally {
-            mLock.unlock();
-        }
-    }
-
-    public TcpRequest readClientRequest(ByteBuffer buffer) {
-        mLock.lock();
-        try {
-            verifyNotClosed();
-            if (!buffer.isDirect()) {
-                throw new IllegalArgumentException("buffer must be direct");
-            }
-            if (buffer.isReadOnly()) {
-                throw new IllegalArgumentException("buffer must writable");
-            }
-
-            int readCount = ModbusTcpServerJNI.readNewClientData(mContextPtr, mServerCtxPtr, buffer);
-            return new TcpRequest(mContextPtr, mServerCtxPtr, buffer, readCount, mLock);
-        } finally {
-            mLock.unlock();
-        }
-    }
-
-    public void closeCurrentClient() {
-        mLock.lock();
-        try {
-            verifyNotClosed();
-
-            ModbusTcpServerJNI.closeCurrentClient(mContextPtr, mServerCtxPtr);
+            PendingDataType type = ModbusTcpServerJNI.waitForNewData(mContextPtr, mServerCtxPtr);
+            return new ServerDataUpdate(mContextPtr, mServerCtxPtr, type, mLock);
         } finally {
             mLock.unlock();
         }

@@ -95,16 +95,16 @@ try (ModbusTcpServer server = Modbus.newTcpServer(
     
     // loop for handling clients
     while (true) {
+        ServerDataUpdate update = server.waitForNewData();
         try {
-            PendingDataType type = server.waitForNewData();
-            switch(type) {
+            switch(update.getType()) {
                 case NEW_CLIENT:
                     // new client wants to connect
-                    server.accept();
+                    update.accept();
                     break;
                 case NEW_DATA:
                     // a client sent a request
-                    TcpRequest request = server.readClientRequest(buffer);
+                    TcpRequest request = update.readClientRequest(buffer);
                     // can access request info if wanted
                     // reply the client with data in Registers
                     request.reply();
@@ -112,7 +112,7 @@ try (ModbusTcpServer server = Modbus.newTcpServer(
             }
         } catch(ModbusIoException e) {
             // error with the client
-            server.closeCurrentClient();
+            update.closeCurrentClient();
         }
     }
 }
