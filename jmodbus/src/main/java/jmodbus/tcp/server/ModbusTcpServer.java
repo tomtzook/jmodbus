@@ -48,7 +48,7 @@ public class ModbusTcpServer extends ModbusContextBase {
         }
     }
 
-    public int readClientRequest(ByteBuffer buffer) {
+    public TcpRequest readClientRequest(ByteBuffer buffer) {
         mLock.lock();
         try {
             verifyNotClosed();
@@ -59,24 +59,8 @@ public class ModbusTcpServer extends ModbusContextBase {
                 throw new IllegalArgumentException("buffer must writable");
             }
 
-            return ModbusTcpServerJNI.readNewClientData(mContextPtr, mServerCtxPtr, buffer);
-        } finally {
-            mLock.unlock();
-        }
-    }
-
-    public void replyClient(ByteBuffer requestBuffer, int requestSize) {
-        mLock.lock();
-        try {
-            verifyNotClosed();
-            if (!requestBuffer.isDirect()) {
-                throw new IllegalArgumentException("buffer must be direct");
-            }
-            if (requestBuffer.isReadOnly()) {
-                throw new IllegalArgumentException("buffer must writable");
-            }
-
-            ModbusTcpServerJNI.replyClient(mContextPtr, mServerCtxPtr, requestBuffer, requestSize);
+            int readCount = ModbusTcpServerJNI.readNewClientData(mContextPtr, mServerCtxPtr, buffer);
+            return new TcpRequest(mContextPtr, mServerCtxPtr, buffer, readCount, mLock);
         } finally {
             mLock.unlock();
         }

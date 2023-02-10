@@ -161,3 +161,16 @@ JNIEXPORT jobject JNICALL Java_jmodbus_ModbusJNI_getIndicationTimeout
         return cls.newInstance<Int, Int>(static_cast<jint>(time_secs), static_cast<jint>(time_usecs));
     });
 }
+
+extern "C"
+JNIEXPORT jint JNICALL Java_jmodbus_ModbusJNI_getHeaderLength
+        (JNIEnv* env, jclass obj, jlong ptr) {
+    return jnikit::context<jint>(env, [ptr](jnikit::Env& env) -> jint  {
+        auto modbus_ctx = reinterpret_cast<modbus_t*>(ptr);
+        int rc = modbus_get_header_length(modbus_ctx);
+        CHECK_ERROR2(env, rc);
+
+
+        return rc;
+    });
+}

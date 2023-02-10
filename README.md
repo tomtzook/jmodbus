@@ -104,9 +104,10 @@ try (ModbusTcpServer server = Modbus.newTcpServer(
                     break;
                 case NEW_DATA:
                     // a client sent a request
-                    int readCount = server.readClientRequest(buffer);
+                    TcpRequest request = server.readClientRequest(buffer);
+                    // can access request info if wanted
                     // reply the client with data in Registers
-                    server.replyClient(buffer, readCount);
+                    request.reply();
                     break;
             }
         } catch(ModbusIoException e) {

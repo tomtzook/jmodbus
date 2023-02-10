@@ -24,6 +24,8 @@ public class ModbusJNI {
     public static native void setIndicationTimeout(long contextPtr, TimeValue value);
     public static native TimeValue getIndicationTimeout(long contextPtr);
 
+    public static native int getHeaderLength(long contextPtr);
+
     public static native void readCoils(long contextPtr, int address, int count, boolean[] buffer);
     public static native long readCoils2(long contextPtr, int address, int count);
     public static native void readCoils3(long contextPtr, int address, int count, Buffer buffer);
