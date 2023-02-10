@@ -41,8 +41,8 @@ try (ModbusClient client = Modbus.newTcpClient("127.0.0.1", 1524)) {
     // read an int made out of two registers
     ByteBuffer buffer = ByteBuffer.allocate(4);
     client.readHoldingRegisters(0x0, 2, buffer);
-    
-    int value = buffer.order(ByteOrder.BIG_ENDIAN).asIntBuffer().get(0);
+
+    int value = BufferDataHelper.getInt(buffer, 0);
 }
 ```
 
@@ -62,7 +62,7 @@ try (ModbusClient client = Modbus.newRtuClient(
     ByteBuffer buffer = ByteBuffer.allocate(4);
     client.readHoldingRegisters(0x0, 2, buffer);
     
-    int value = buffer.order(ByteOrder.BIG_ENDIAN).asIntBuffer().get(0);
+    int value = BufferDataHelper.getInt(buffer, 0);
 }
 ```
 
