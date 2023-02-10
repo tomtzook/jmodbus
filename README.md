@@ -117,3 +117,14 @@ try (ModbusTcpServer server = Modbus.newTcpServer(
     }
 }
 ```
+
+### Using Server Registers
+
+The `Registers` class describes 4 data block, matching the standard data types in _modbus_.
+Each data block is either a `BitDataBlock` for bit sized data types or `WordDataBlock` for word sized types.
+
+Per _modbus_'s specs, the data blocks store data in _big endian_ order. 
+
+These data blocks contain the values that are to be returned to the clients on a request. Modify these regularly, or
+when a request is received, to update the data returned to the client. Query this regularly to see data
+set by the clients.

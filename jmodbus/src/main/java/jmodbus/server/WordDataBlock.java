@@ -1,5 +1,7 @@
 package jmodbus.server;
 
+import jmodbus.BufferDataHelper;
+
 import java.nio.ByteBuffer;
 
 public class WordDataBlock extends DataBlock {
@@ -9,53 +11,62 @@ public class WordDataBlock extends DataBlock {
     }
 
     public void putShort(int address, short value) {
-        byte msb = (byte) ((value >> 8) & 0xff);
-        byte lsb = (byte) (value & 0xff);
-
         address = offset(address);
         ByteBuffer buffer = getBuffer();
-        buffer.put(address, lsb);
-        buffer.put(address + 1, msb);
+        BufferDataHelper.putShort(buffer, address, value);
     }
 
     public short getShort(int address) {
         address = offset(address);
         ByteBuffer buffer = getBuffer();
-
-        byte lsb = buffer.get(address);
-        byte msb = buffer.get(address + 1);
-
-        return (short) (
-                ((msb & 0xff) << 8) |
-                (lsb & 0xff));
+        return BufferDataHelper.getShort(buffer, address);
     }
 
     public void putInt(int address, int value) {
-        byte d = (byte) ((value >> 24) & 0xff);
-        byte c = (byte) ((value >> 16) & 0xff);
-        byte b = (byte) ((value >> 8) & 0xff);
-        byte a = (byte) (value & 0xff);
-
         address = offset(address);
         ByteBuffer buffer = getBuffer();
-        buffer.put(address, a);
-        buffer.put(address + 1, b);
-        buffer.put(address + 2, c);
-        buffer.put(address + 3, d);
+        BufferDataHelper.putInt(buffer, address, value);
     }
 
     public int getInt(int address) {
         address = offset(address);
         ByteBuffer buffer = getBuffer();
+        return BufferDataHelper.getInt(buffer, address);
+    }
 
-        byte a = buffer.get(address);
-        byte b = buffer.get(address + 1);
-        byte c = buffer.get(address + 2);
-        byte d = buffer.get(address + 3);
+    public void putFloat(int address, float value) {
+        address = offset(address);
+        ByteBuffer buffer = getBuffer();
+        BufferDataHelper.putFloat(buffer, address, value);
+    }
 
-        return (((d & 0xff) << 24) |
-                ((c & 0xff) << 16) |
-                ((b & 0xff) << 8) |
-                (a & 0xff));
+    public float getFloat(int address) {
+        address = offset(address);
+        ByteBuffer buffer = getBuffer();
+        return BufferDataHelper.getFloat(buffer, address);
+    }
+
+    public void putLong(int address, long value) {
+        address = offset(address);
+        ByteBuffer buffer = getBuffer();
+        BufferDataHelper.putLong(buffer, address, value);
+    }
+
+    public long getLong(int address) {
+        address = offset(address);
+        ByteBuffer buffer = getBuffer();
+        return BufferDataHelper.getLong(buffer, address);
+    }
+
+    public void putDouble(int address, double value) {
+        address = offset(address);
+        ByteBuffer buffer = getBuffer();
+        BufferDataHelper.putDouble(buffer, address, value);
+    }
+
+    public double getDouble(int address) {
+        address = offset(address);
+        ByteBuffer buffer = getBuffer();
+        return BufferDataHelper.getDouble(buffer, address);
     }
 }

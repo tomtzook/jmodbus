@@ -52,8 +52,8 @@ JNIEXPORT void JNICALL Java_jmodbus_ModbusJNI_readHoldingRegisters3
         static_assert(sizeof(uint16_t) == sizeof(jshort));
 
         for (int i = 0; i < count; ++i) {
-            valueArray.setElement(i * 2, static_cast<int8_t>((buffer[i] >> 8) & 0xff));
-            valueArray.setElement(i * 2 + 1, static_cast<int8_t>(buffer[i] & 0xff));
+            valueArray.setElement(i * 2, static_cast<int8_t>(buffer[i] & 0xff));
+            valueArray.setElement(i * 2 + 1, static_cast<int8_t>((buffer[i] >> 8) & 0xff));
         }
     });
 }
