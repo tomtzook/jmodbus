@@ -15,7 +15,7 @@ _jmodbus_ is published to _maven central_. For _gradle_, use
 // for the java API
 implementation group: 'com.github.tomtzook', name: 'jmodbus', version: version
 // for the JNI natives
-implementation group: 'com.github.tomtzook', name: 'jmodbus-jni', version: '0.3.0', classifier: 'linux-amd64'
+implementation group: 'com.github.tomtzook', name: 'jmodbus-jni', version: version, classifier: platform
 ```
 
 The `classifier` specifies the platform which is used, can be one of:
